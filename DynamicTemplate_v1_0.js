@@ -76,7 +76,7 @@ dynamicTemplateModule.factory('DynamicTemplate', function($templateCache, $templ
 	var dtProvider = this;
 	dtProvider.config = {
 		autoRequest:true,
-		autoRequestUrl:'/recordTemplates'
+		autoRequestUrl:'/'
 	}
 
 
