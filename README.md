@@ -10,7 +10,8 @@ There is also a directive created with DynamicTemplate service for general usage
  > **Note:**  Dynamic Templates conditions are NOT DIRECTIVE. They are tag for define conditions to parse templateHtml and compile it. If you need a directive to use conditions ngIf does the job.
 
 ## Demos
-    [Basic Functionality Demo](https://codepen.io/NoSur/pen/eEgEVw)
+[Basic Functionality Demo](https://codepen.io/NoSur/pen/eEgEVw)
+
 ## What does DynamicTemplate ?
 
 ### Create & save templates with or without condtions
