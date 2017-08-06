@@ -153,13 +153,16 @@ Inject the module and get the service.
     })
 
 
-    // An Example
+// An Example
 
   app.directive('someDirective', function ( DynamicTemplate ) {
 
+    // You can download templates here too.
+    // DynamicTemplate.downloadTemplate('someTemplateName');
+
     return {
       controller:controllerFunc,
-      compile: function compile(tElement, tAttrs) {
+      compile: function compile(tElement, tAttrs) { // If you compile element on preLink you will get better performance because in here element has not compiled yet.
 
         return
         {
@@ -239,4 +242,4 @@ Inject the module and get the service.
     DynamicTemplate uses jquery's `element` and `html` function.
 
 ## Known issues
-    Jquery's `html` function has a bug
+    Jquery's `html` function has a bug that cant create element from string has not starts with element tag.
