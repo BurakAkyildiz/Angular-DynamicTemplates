@@ -491,15 +491,10 @@ dynamicTemplateModule.factory('DynamicTemplate', function($templateCache, $templ
 
         dynamicTemp.store = $templateCache;
         dynamicTemp.req = $templateRequest;
-        dynamicTemp.templateRequestUrl = dtProvider.config.autoRequestUrl;
         dynamicTemp.pendingDownloads = [];
         dynamicTemp.pendingDownloadPromises = {};
 		dynamicTemp.config = dtProvider.config;
 
-        dynamicTemp.setTemplateRequestUrl = function( url )
-		{
-			this.templateRequestUrl = url;
-		};
 
         dynamicTemp.downloadTemplate = function ( templateName, getParams, successCallBack, errorCallBack )
 		{
@@ -549,7 +544,7 @@ dynamicTemplateModule.factory('DynamicTemplate', function($templateCache, $templ
 				var self_ = this;
 
 				element.empty();
-				
+
 				var dtTemplate = getDTTemplate( templateName ),
 				 	newScope = parentScope.$new(),
 					compileElement = function(){
@@ -639,7 +634,7 @@ dynamicTemplateModule.factory('DynamicTemplate', function($templateCache, $templ
 						templateName = templateName.templateName;
 						delete getParams.templateName;
 					}
-					
+
 					self_.downloadTemplate(templateName, getParams, function(){
 						compileElement();
 					});
@@ -656,7 +651,7 @@ dynamicTemplateModule.factory('DynamicTemplate', function($templateCache, $templ
 
 		function requestTemplate( templateName, getParams )
 		{
-			var url = dynamicTemp.templateRequestUrl;
+			var url = dynamicTemp.config.autoRequestUrl;
 
 			if( getParams instanceof Object )
 			{
