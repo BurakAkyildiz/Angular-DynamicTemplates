@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="./DynamicTemplate.js"></script>
+
+    </head>
+
+    <body ng-app="app" ng-controller="ctrl">
+
+        Change Value to change condition result :
+        <select ng-model="value">
+            <option ng-value="1" >
+                1
+            </option>
+
+            <option ng-value="2" >
+                2
+            </option>
+
+            <option ng-value="3" >
+                3
+            </option>
+            <option ng-value="4" >
+                4
+            </option>
+            <option ng-value="5" >
+                5
+            </option>
+        </select></br>
+        </br>
+        Dynamic Template Output
+        <div id="anElementToCompile" style="border:1px;border-style:solid;">
+        </div>
+        </br></br>
+
+        Dynamic Template Directive Output
+        <div dynamic-template="'template1'" dynamic-template-watch-group="['value']" style="border:1px;border-style:solid;">
+        </div>
+        <br>
+        Original template output with ngInclude
+        <br>
+        <div ng-include="'template1'" style="border:1px;border-style:solid;width:49%;float:left;">
+        </div>
+
+        Original template HTML string
+        <div style="border:1px;border-style:solid;width:49%;float:left;">
+            {{ $templateCache.get('template1') }}
+        </div>
+
+
+
+
+
+    </body>
+    <script type="text/ng-template" id="template1">
+        <div dynamic-template-if="value == 1">
+            <span> Condition 1 </span></br>
+            <img src="http://lorempixel.com/50/50/cats/1/" width="50" height="50"/>
+        </div>
+        <div dynamic-template-else-if="value == 2">
+            <span> Condition 2 </span></br>
+            <img src="http://lorempixel.com/50/50/cats/2/"  width="50" height="50" />
+        </div>
+        <div dynamic-template-else-if="value == 3">
+            <span> Condition 3 </span></br>
+            <img src="http://lorempixel.com/50/50/cats/3/"  width="50" height="50"/>
+        </div>
+        <div dynamic-template-else>
+            <span> Condition else </span></br>
+            <img src="http://lorempixel.com/50/50/cats/4/"  width="50" height="50"/>
+        </div>
+    </script>
+
+    <script>
+
+        var app = angular.module('app', ['DynamicTemplate']);
+
+        var ctrl = app.controller('ctrl', ctrl);
+
+        function ctrl( $scope, DynamicTemplate, $sce, $templateCache )
+        {
+
+            $scope.$templateCache = $templateCache;
+            $scope.value = 1;
+
+            DynamicTemplate.compileElement('template1', angular.element('#anElementToCompile'), $scope, ['value']);
+
+        }
+    </script>
+</html>
