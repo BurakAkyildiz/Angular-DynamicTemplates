@@ -59,6 +59,7 @@ $scope.experiance = 5;
 
 ### Download a template
 ```
+//Returns http request promise
 DynamicTemplate.downloadTemplate( templateName )
 
 ```
@@ -85,13 +86,15 @@ DynamicTemplate.downloadTemplate( templateName, requestParams, successCallBack, 
 ## Compile elements & directives with any template
 
 You can define a template with 3 way;
+
  1- A dynamicTemplate can be created with `createSaveDTTemplate` function.
+
  2- A script tag
 ```
 <script type="text/ng-template" id="/tpl.html">
-	<element>
-		<h1 dynamic-template-if="checkThis()"> A Title </h1>		
-	</element>
+  <element>
+    <h1 dynamic-template-if="checkThis()"> A Title </h1>		
+  </element>
 </script>
 
 ```
@@ -118,7 +121,7 @@ Optionaly you can use **compileElement** like
 ```
 DynamicTemplate.compileElement(templateName, element, scope, watchGroupExpression, beforeCompileHook, afterCompileHook);
 ```
-**`watchGroupExpression :`** It is expression for `$scope.$watchGroup` function. With this expression a watchGroup is started. When any of watchGroup expression returns different the element will be re compiled with same *`$scope`*.
+**`watchGroupExpression :`** It is expression for `$scope.$watchGroup` function. With this expression a watchGroup is started. When any of watchGroup expression returns different the element will be re compiled with same *`$scope`* and *`templateName`*.
 
 **`beforeCompileHook :`** This hook function will have templateHtml as parameter.  Before compile you can edit templateHtml string. The element will be compiled using this templateHtml.
 
@@ -128,8 +131,90 @@ DynamicTemplate.compileElement(templateName, element, scope, watchGroupExpressio
 
 
 ## DynamicTemplate cashes $compile link functions
- DynamicTemplate cashes $compile link functions based on condition matches. So you will have better performance on recompile.
+ DynamicTemplate cashes $compile link functions based on condition matches. So you will have better performance on recompile. Cashed linkFunctions are using by all DynamicTemplate service instances.
+ DynamicTemplate destroyes the child scopes when element is destroyed and removes watchGroup expression on destroy.
 
+## To use DynamicTemplate
+Inject the module and get the service.
+```
+    var app = angular.module('app', 'DynamicTemplate');
+
+    app.controller('ctrl', function($scope, DynamicTemplate){
+        ....
+    })
+
+    // or
+
+    app.directive('someDirective', function( DynamicTemplate ){
+
+        return {
+
+        }
+    })
+
+
+    // An Example
+
+    app.directive('someDirective', function ( DynamicTemplate ) {
+
+    	return {
+    		controller:controllerFunc,
+            compile: function compile(tElement, tAttrs) {
+                return {
+                    pre: function preLink(scope, element, attr) {
+
+    					var beforeCompile = function (templateStr)
+    					{
+    						// It is an string operation to change templateHtml so the element will be created differently if you want.
+    						if (templateStr!= undefined)
+    							return templateStr.replace("<an-other-directive></an-other-directive>", "<any-directive></any-directive>");
+
+    						return templateStr;
+    					};
+
+
+
+    					DynamicTemplate.downloadTemplate('someTemplateName', {reqParam1:'someValue' }).then(function()
+    					{
+                            //After download DynamicTemplate already created and saved templateHtml to cash so you can compile element.
+
+    						DynamicTemplate.compileElement('someTemplateName', element, scope, ['$root.someRootValue'], beforeCompile);
+                            // Element is compiled. When `$root.someRootValue` changes element will be re compiled with same template and scope.
+    					});
+
+
+                    }
+                }
+            }
+    	}
+
+    });
+
+```
+
+
+## To use dynamicTemplate Directive
+
+```
+    // Insert the directive as attribute to any element
+    // dynamic-template directive automaticly compile element with given templateName. If value changes element will be recompiled.
+    <any-element dynamic-template="'someTemplateName'">
+    </any-element>
+
+
+    // or
+
+    // Value considered same as compileElement functions templateName parameter. So you can send autoRequest parameters too.
+    <any-element dynamic-template="{templateName:'someTemplateName', requestParam1:'someValue', requestParam2:12345}">
+    </any-element>
+
+
+    // You can watch values and automaticly recompile element.
+    <any-element
+        dynamic-template="{templateName:'someTemplateName', requestParam1:(aVariable), requestParam2:12345}"
+        dynamic-template-watch-group="['aVariable']"> // When `$scope.aVariable` changes element will be recompiled.
+    </any-element>
+```
 
 ## DynamicTemplate Config
 
@@ -137,3 +222,10 @@ DynamicTemplate.compileElement(templateName, element, scope, watchGroupExpressio
  ----------------- | ------- | ------- | ----------- |
 | autoRequest      | boolean | true    | If no template found with templateName param request will be sended to download a templateHtml.|
 | autoRequestUrl   | string  | "/"     | Request url to downloadTemplate method. DynamicTemplate uses downloadTemplate method for autoRequest.|
+
+
+## Dependencies
+    DynamicTemplate uses jquery's `element` and `html` function.
+
+## Known issues
+    Jquery's `html` function has a bug
