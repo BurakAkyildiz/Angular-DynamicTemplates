@@ -155,38 +155,41 @@ Inject the module and get the service.
 
     // An Example
 
-    app.directive('someDirective', function ( DynamicTemplate ) {
+  app.directive('someDirective', function ( DynamicTemplate ) {
 
-    	return {
-    		controller:controllerFunc,
-            compile: function compile(tElement, tAttrs) {
-                return {
-                    pre: function preLink(scope, element, attr) {
+    return {
+      controller:controllerFunc,
+      compile: function compile(tElement, tAttrs) {
 
-    					var beforeCompile = function (templateStr)
-    					{
-    						// It is an string operation to change templateHtml so the element will be created differently if you want.
-    						if (templateStr!= undefined)
-    							return templateStr.replace("<an-other-directive></an-other-directive>", "<any-directive></any-directive>");
+        return
+        {
+          pre: function preLink(scope, element, attr) {
 
-    						return templateStr;
-    					};
+    	   var beforeCompile = function (templateStr)
+    	   {
+    		 // It is an string operation to change templateHtml so the element will be created differently if you want.
+    		 if (templateStr!= undefined)
+    		   return templateStr.replace("<an-other-directive></an-other-directive>", "<any-directive></any-directive>");
 
-
-
-    					DynamicTemplate.downloadTemplate('someTemplateName', {reqParam1:'someValue' }).then(function()
-    					{
-                            //After download DynamicTemplate already created and saved templateHtml to cash so you can compile element.
-
-    						DynamicTemplate.compileElement('someTemplateName', element, scope, ['$root.someRootValue'], beforeCompile);
-                            // Element is compiled. When `$root.someRootValue` changes element will be re compiled with same template and scope.
-    					});
+    		 return templateStr;
+    	   };
 
 
-                    }
-                }
-            }
-    	}
+
+           DynamicTemplate.downloadTemplate('someTemplateName', {reqParam1:'someValue' }).then(function()
+           {
+             //After download DynamicTemplate already created and saved templateHtml to cash so you can compile element.
+
+             DynamicTemplate.compileElement('someTemplateName', element, scope, ['$root.someRootValue'], beforeCompile);
+
+             // Element is compiled. When `$root.someRootValue` changes element will be re compiled with same template and scope.
+           });
+
+
+          }
+        }
+    }
+  }
 
     });
 
@@ -198,21 +201,29 @@ Inject the module and get the service.
 ```
     // Insert the directive as attribute to any element
     // dynamic-template directive automaticly compile element with given templateName. If value changes element will be recompiled.
+
     <any-element dynamic-template="'someTemplateName'">
+
     </any-element>
 
 
     // or
 
     // Value considered same as compileElement functions templateName parameter. So you can send autoRequest parameters too.
+
     <any-element dynamic-template="{templateName:'someTemplateName', requestParam1:'someValue', requestParam2:12345}">
+
     </any-element>
 
 
     // You can watch values and automaticly recompile element.
+
     <any-element
         dynamic-template="{templateName:'someTemplateName', requestParam1:(aVariable), requestParam2:12345}"
-        dynamic-template-watch-group="['aVariable']"> // When `$scope.aVariable` changes element will be recompiled.
+        dynamic-template-watch-group="['aVariable']">
+
+        // When `$scope.aVariable` changes element will be recompiled.
+
     </any-element>
 ```
 
